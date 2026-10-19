@@ -15,7 +15,9 @@ const config: Config = {
   rootDir: '.',
   testRegex: '.*\\.spec\\.ts$',
   transform: {
-    '^.+\\.(t|j)s$': 'ts-jest',
+    // Inline rootDir fixes TS5011 with TS 6 + `declaration: true` (see AGENTS.md):
+    // ts-jest infers the rootDir from the common source dir of the specs.
+    '^.+\\.(t|j)s$': ['ts-jest', { tsconfig: { rootDir: '.' } }],
   },
   moduleNameMapper: pathsToModuleNameMapper(paths, { prefix: '<rootDir>/' }),
   collectCoverageFrom: [
