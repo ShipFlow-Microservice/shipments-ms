@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ShipmentStatus {
+  CREATED
+  DISPATCHED
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+}
+
+model Shipment {
+  id            String              @id @default(uuid())
+  trackingCode  String              @unique
+  senderId      String
+  receiverName  String
+  receiverEmail String
+  origin        String
+  destination   String
+  notes         String?
+  status        ShipmentStatus      @default(CREATED)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  statusLogs    ShipmentStatusLog[]
+}
+
+model ShipmentStatusLog {
+  id         String          @id @default(uuid())
+  shipmentId String
+  shipment   Shipment        @relation(fields: [shipmentId], references: [id])
+  fromStatus ShipmentStatus?
+  toStatus   ShipmentStatus
+  note       String?
+  createdAt  DateTime        @default(now())
+}
