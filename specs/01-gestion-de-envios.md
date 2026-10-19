@@ -1,6 +1,6 @@
 # SPEC 01 — Gestión de envíos en shipments-ms (microservicio NATS)
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depends on:** Ninguno (convive con auth-ms a través del mismo broker NATS)
 > **Fecha:** 2026-10-19
 > **Objetivo:** Convertir el starter shipments-ms en un microservicio NATS con Postgres/Prisma que gestiona el ciclo de vida de envíos (crear, consultar, listar, cancelar y transicionar estado) listo para que client-gateway lo consuma.
@@ -110,22 +110,22 @@ const VALID_TRANSITIONS: Record<ShipmentStatus, ShipmentStatus[]> = {
 
 ## Acceptance criteria
 
-- [ ] `@nestjs/microservices`, `nats`, `prisma`, `@prisma/client`, `joi`, `class-validator`, `class-transformer` están en `package.json`
-- [ ] `envs.ts` valida `NATS_URL` y `DATABASE_URL` con Joi
-- [ ] `main.ts` usa `NestFactory.createMicroservice()` con `Transport.NATS` (sin servidor HTTP)
-- [ ] `docker-compose.yml` expone solo Postgres en :5434 y no declara NATS
-- [ ] El schema Prisma define `Shipment`, `ShipmentStatusLog` y enum `ShipmentStatus`, con `trackingCode` unique
-- [ ] `shipments.create` crea un envío con `trackingCode` `SHP-XXXXXXXX` y status `CREATED`
-- [ ] `shipments.findOne` con id inexistente retorna error `404`
-- [ ] `shipments.findByTrackingCode` retorna el envío correcto
-- [ ] `shipments.findAll` pagina (page/limit) y filtra por `status`
-- [ ] `shipments.cancel` permite cancelar en `CREATED` y `DISPATCHED`
-- [ ] `shipments.cancel` sobre `IN_TRANSIT`/`DELIVERED`/`CANCELLED` retorna error `409`
-- [ ] `shipments.updateStatus` acepta solo transiciones del mapa (p. ej. `CREATED → DELIVERED` retorna `400`)
-- [ ] Cada cambio de estado inserta una fila en `ShipmentStatusLog` en la misma transacción
-- [ ] El test unitario de `canTransition()` pasa (`npm.cmd run test`)
-- [ ] `npm.cmd run build` y `npm.cmd run lint` compilan sin errores
-- [ ] El microservicio se conecta a NATS y expone los 6 patrones
+- [x] `@nestjs/microservices`, `nats`, `prisma`, `@prisma/client`, `joi`, `class-validator`, `class-transformer` están en `package.json`
+- [x] `envs.ts` valida `NATS_URL` y `DATABASE_URL` con Joi
+- [x] `main.ts` usa `NestFactory.createMicroservice()` con `Transport.NATS` (sin servidor HTTP)
+- [x] `docker-compose.yml` expone solo Postgres en :5434 y no declara NATS
+- [x] El schema Prisma define `Shipment`, `ShipmentStatusLog` y enum `ShipmentStatus`, con `trackingCode` unique
+- [x] `shipments.create` crea un envío con `trackingCode` `SHP-XXXXXXXX` y status `CREATED`
+- [x] `shipments.findOne` con id inexistente retorna error `404`
+- [x] `shipments.findByTrackingCode` retorna el envío correcto
+- [x] `shipments.findAll` pagina (page/limit) y filtra por `status`
+- [x] `shipments.cancel` permite cancelar en `CREATED` y `DISPATCHED`
+- [x] `shipments.cancel` sobre `IN_TRANSIT`/`DELIVERED`/`CANCELLED` retorna error `409`
+- [x] `shipments.updateStatus` acepta solo transiciones del mapa (p. ej. `CREATED → DELIVERED` retorna `400`)
+- [x] Cada cambio de estado inserta una fila en `ShipmentStatusLog` en la misma transacción
+- [x] El test unitario de `canTransition()` pasa (`npm.cmd run test`)
+- [x] `npm.cmd run build` y `npm.cmd run lint` compilan sin errores
+- [x] El microservicio se conecta a NATS y expone los 6 patrones
 
 ---
 
